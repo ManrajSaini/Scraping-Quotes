@@ -1,5 +1,7 @@
 const puppeteer = require("puppeteer");
 
+let data = [];
+
 const getQuotes = async () => {
     const browser = await puppeteer.launch({
         headless: false,
@@ -12,23 +14,39 @@ const getQuotes = async () => {
         waitUntil: "domcontentloaded"
     });
 
-    const quotes = await page.evaluate(() => {
-        const allQuotes = document.querySelectorAll(".quote");
+    let hasNextPage = true;
 
-        const quoteArr = Array.from(allQuotes);
+    while(hasNextPage){
+        const quotes = await page.evaluate(() => {
+            const allQuotes = document.querySelectorAll(".quote");
 
-        const quoteList = quoteArr.map((quote) => {
-            const text = quote.querySelector(".text").innerText;
-            const author = quote.querySelector(".author").innerText;
+            const quoteArr = Array.from(allQuotes);
 
-            return {text, author};
+            const quoteList = quoteArr.map((quote) => {
+                const text = quote.querySelector(".text").innerText;
+                const author = quote.querySelector(".author").innerText;
+
+                return {text, author};
+            });
+
+            return quoteList;
         });
 
-        return quoteList;
-    });
+        data = data.concat(quotes)
 
-    console.log(quotes);
+        const nextPageBtn = await page.$(".pager > .next > a");
 
+        if(nextPageBtn)
+            await nextPageBtn.click();
+
+        else
+            hasNextPage = false;
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    }
+
+    console.log(data);
+    
     await browser.close();
 };
 
