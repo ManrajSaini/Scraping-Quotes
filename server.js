@@ -12,6 +12,18 @@ const getQuotes = async () => {
         waitUntil: "domcontentloaded"
     });
 
+    const quotes = await page.evaluate(() => {
+        const quote = document.querySelector(".quote");
+
+        const text = quote.querySelector(".text").innerText;
+        const author = quote.querySelector(".author").innerText;
+
+        return {text, author};
+    });
+
+    console.log(quotes);
+
+    await browser.close();
 };
 
 getQuotes();
