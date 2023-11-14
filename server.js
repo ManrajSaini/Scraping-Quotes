@@ -26,7 +26,16 @@ const getQuotes = async () => {
                 const text = quote.querySelector(".text").innerText;
                 const author = quote.querySelector(".author").innerText;
 
-                return {text, author};
+                const allTags = quote.querySelectorAll(".tags > .tag");
+                const tagArr = Array.from(allTags);
+
+                const tagList = tagArr.map((singleTag) => {
+                    const genre = singleTag.innerText;
+
+                    return genre;
+                });
+
+                return {text, author, tagList};
             });
 
             return quoteList;
