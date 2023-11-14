@@ -1,4 +1,5 @@
 const getAllQuotes = require("./getAllQuotes");
+const getAboutAuthor = require("./getAboutAuthor");
 
 const condition = process.argv[2];
 
